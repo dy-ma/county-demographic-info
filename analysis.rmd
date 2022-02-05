@@ -243,8 +243,11 @@ sprintf("W (4): [%.3f, %.3f]", W_lo, W_up)
 ```
 
 ```{r}
-library(knitr)
-kable(anova(fit_NE))
+# SSRs
+SSR_NE = sum( ( (b0_NE + b1_NE * NE$V12) - mean(NE$V15) )^2 )
+SSR_NC = sum( ( (b0_NC + b1_NC * NC$V12) - mean(NC$V15) )^2 )
+SSR_S = sum( ( (b0_S + b1_S * S$V12) - mean(S$V15) )^2 )
+SSR_W = sum( ( (b0_W + b1_W * W$V12) - mean(W$V15) )^2 )
 ```
 
 ## Residuals
