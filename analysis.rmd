@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ---
 title: "STA 108 Project 1"
 author: "Mahir Oza, Dylan M. Ang, In Seon Kim"
@@ -21,6 +20,21 @@ knitr::opts_chunk$set(
 	tidy = FALSE #add line breaks in R codes
 )
 ```
+
+
+## Background
+
+The United States Census Bureau is a government organization that collects and produces data about the American people and economy. Its mission is to display quality data about the population in all regions of America. Every 10 years, they conduct a population and housing census that includes all residents living in the United States. They not only count the population, but also gather information about different factors in order to analyze the people and economy.
+
+Throughout our project, we analyze the County Demographic Information (CDI) provided by the United States Census Bureau. The data set displays information about 440 populous counties in the United States with 14 different variables to describe the county's economy. The counties range from all throughout the US, from Orange County in California to Wayne County in North Carolina. Various data variables such as land area, total population, number of active physicians, number of hospital beds, total serious crime, percent high school graduates, percent bachelor's degree, etc were gathered for a single county. Some counties with missing data were deleted from the data set. The data reflects the years 1990 and 1992. 
+
+We will be using R studio, a known professional software used in statistics, in our research to analyze and graph our data. The purpose of this is to demonstrate and analyze a simple linear regression model for our random variables and display inference methods that can be applied to our model. Data is provided from the textbook "Applied Linear Statistical Models" and our project will contain five parts:
+
+- Fitting regression models
+- Measuring linear association
+- Inference about regression parameters
+- Regression diagnostics
+- Discussion
 
 
 ## Part 1 1.43
@@ -95,12 +109,15 @@ E_pop = phys - (b0_pop + (b1_pop * pop))
 E_bed = phys - (b0_bed + (b1_bed * bed))
 E_inc = phys - (b0_inc + (b1_inc * inc))
 # Residuals Plot
-plot(x=phys,y=E_pop,xlab="Total Population", ylab="Residuals")
-plot(x=phys,y=E_bed,xlab="Hospital Beds", ylab="Residuals")
-plot(x=phys,y=E_inc,xlab="Total Personal Income (in millions of dollars", ylab="Residuals")
-sprintf("Population SSE: %e", sum(E_pop))
-sprintf("Hospital Beds SSE : %e", sum(E_bed))
-sprintf("Income SSE : %e", sum(E_inc))
+plot(x=phys,y=E_pop,
+     xlab="Total Population", ylab="Residuals")
+plot(x=phys,y=E_bed,
+     xlab="Hospital Beds", ylab="Residuals")
+plot(x=phys,y=E_inc,
+     xlab="Total Personal Income (in millions of dollars", ylab="Residuals")
+sprintf("Population Sum of Residuals: %e", sum(E_pop))
+sprintf("Hospital Beds Sum of Residuals : %e", sum(E_bed))
+sprintf("Income Sum of Residuals : %e", sum(E_inc))
 ```
 
 The residual plot for all 3 predictor variables as a 
@@ -160,56 +177,10 @@ number of hospital beds accounts for the largest reduction in variability
 in the number of active physicians.
 
 
-
-
-
-
-
-
-
-
 ## Appendix
 
 ```{r, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
-=======
-# Data Analysis of County Demographic Info
-
-authors: In Seon Kim, Dylan M Ang, Mahir Oza
-
-date: Feb 7th, 2022
-
-## Background
-
-The United States Census Bureau is a government organization that collects and produces data about the American people and economy. Its mission is to display quality data about the population in all regions of America. Every 10 years, they conduct a population and housing census that includes all residents living in the United States. They not only count the population, but also gather information about different factors in order to analyze the people and economy.
-
-Throughout our project, we analyze the County Demographic Information (CDI) provided by the United States Census Bureau. The data set displays information about 440 populous counties in the United States with 14 different variables to describe the county's economy. The counties range from all throughout the US, from Orange County in California to Wayne County in North Carolina. Various data variables such as land area, total population, number of active physicians, number of hospital beds, total serious crime, percent high school graduates, percent bachelor's degree, etc were gathered for a single county. Some counties with missing data were deleted from the data set. The data reflects the years 1990 and 1992. 
-
-We will be using R studio, a known professional software used in statistics, in our research to analyze and graph our data. The purpose of this is to demonstrate and analyze a simple linear regression model for our random variables and display inference methods that can be applied to our model. Data is provided from the textbook "Applied Linear Statistical Models" and our project will contain five parts:
-
-- Fitting regression models
-- Measuring linear association
-- Inference about regression parameters
-- Regression diagnostics
-- Discussion
-
-
-## Part 1: Fitting Regression Models
-
-### a
-Hi
-
-### b
-
-### c
-
-
-
-
->>>>>>> 9ef23296772d27661a47995e7185ec4dd457a6e8
-
-
-
 
 
 
