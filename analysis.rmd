@@ -250,19 +250,48 @@ SSR_S = sum( ( (b0_S + b1_S * S$V12) - mean(S$V15) )^2 )
 SSR_W = sum( ( (b0_W + b1_W * W$V12) - mean(W$V15) )^2 )
 ```
 
-## Residuals
+## Part 4 Regression diagnostics
+### Plot 1
 ```{r}
-# Residuals Plot
-plot(x=phys,y=E_pop,
-     xlab="Total Population", ylab="Residuals")
-plot(x=phys,y=E_bed,
-     xlab="Hospital Beds", ylab="Residuals")
-plot(x=phys,y=E_inc,
-     xlab="Total Personal Income (in millions of dollars", ylab="Residuals")
-sprintf("Population Sum of Residuals: %e", sum(E_pop))
-sprintf("Hospital Beds Sum of Residuals : %e", sum(E_bed))
-sprintf("Income Sum of Residuals : %e", sum(E_inc))
+#Residual Plot 
+plot(CDI$V5, fit_pop$residuals, 
+     xlab="Total Population", ylab="Residuals",
+     main="Total Population and Residuals")
+abline(h=0, col = 'red')
+
+#Normal Probability Plot
+qqplot = qqnorm(fit_pop$residuals)
+qqline(fit_pop$residuals, col='red')
 ```
+
+### Plot 2
+```{r}
+#Residual Plot
+plot(CDI$V9, fit_bed$residuals, 
+     xlab="Hospital Beds", ylab="Residuals",
+     main="Total Hospital Beds and Residuals")
+abline(h=0, col='red')
+
+#Normal Probability Plot
+qqplot = qqnorm(fit_bed$residuals)
+qqline(fit_bed$residuals, col='red')
+```
+
+### Plot 3
+```{r}
+plot(CDI$V16, fit_inc$residuals,
+     xlab="Total Personal Income (in millions of dollars)", ylab = "Residuals",
+     main="Total Personal Income and Residuals")
+abline(h=0, col='red')
+
+#Normal Probability Plot
+qqplot = qqnorm(fit_inc$residuals)
+qqline(fit_inc$residuals, col='red')
+```
+
+
+
+
 
 The residual plot for all 3 predictor variables as a 
 function of the number of active physicians shows no distinguishable 
