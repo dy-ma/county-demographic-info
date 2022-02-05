@@ -176,6 +176,7 @@ number of hospital beds into the regression model. This shows that the
 number of hospital beds accounts for the largest reduction in variability 
 in the number of active physicians.
 
+hi
 
 ## Appendix
 
