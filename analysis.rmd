@@ -165,8 +165,6 @@ in the number of active physicians.
 ## Part 3 Inference about regression parameters
 
 ```{r}
-alpha = 0.1
-t = qt((1 - alpha/2), n_pop - 2, lower.tail = TRUE)
 
 # split region
 # V12: % Bachelors and V15: per capita income
@@ -181,6 +179,72 @@ S = CDI[region, c("V12", "V15")]
 
 region = CDI$V17 == "4"
 W = CDI[region, c("V12", "V15")]
+
+# linear models
+fit_NE = lm(NE$V15 ~ NE$V12)
+fit_NC = lm(NC$V15 ~ NC$V12)
+fit_S = lm(S$V15 ~ S$V12)
+fit_W = lm(W$V15 ~ W$V12)
+
+# betas
+b0_NE = fit_NE$coefficients[1]
+b0_NC = fit_NC$coefficients[1]
+b0_S = fit_S$coefficients[1]
+b0_W = fit_W$coefficients[1]
+
+b1_NE = fit_NE$coefficients[2]
+b1_NC = fit_NC$coefficients[2]
+b1_S = fit_S$coefficients[2]
+b1_W = fit_W$coefficients[2]
+
+# SSEs
+SSE_NE = sum( ( NE$V15 - (b0_NE + b1_NE * NE$V12) )^2 )
+SSE_NC = sum( ( NC$V15 - (b0_NC + b1_NC * NC$V12) )^2 )
+SSE_S = sum( ( S$V15 - (b0_S + b1_S * S$V12) )^2 )
+SSE_W = sum( ( W$V15 - (b0_W + b1_W * W$V12) )^2 )
+
+# MSEs
+MSE_NE = SSE_NE / (nrow(NE) - 2)
+MSE_NC = SSE_NC / (nrow(NC) - 2)
+MSE_S = SSE_S / (nrow(S) - 2)
+MSE_W = SSE_W / (nrow(W) - 2)
+
+# t vals 
+alpha = 0.1
+t_NE = qt(1 - alpha/2, nrow(NE) - 2)
+t_NC = qt(1 - alpha/2, nrow(NC) - 2)
+t_S = qt(1 - alpha/2, nrow(S) - 2)
+t_W = qt(1 - alpha/2, nrow(W) - 2)
+
+# SEs
+SE_NE = sqrt( MSE_NE / sum( (NE$V12 - mean(NE$V12) )^2) )
+SE_NC = sqrt( MSE_NC / sum( (NC$V12 - mean(NC$V12) )^2) )
+SE_S = sqrt( MSE_S / sum( (S$V12 - mean(S$V12) )^2) )
+SE_W = sqrt( MSE_W / sum( (W$V12 - mean(W$V12) )^2) )
+
+#  CIs
+NE_up = b1_NE + t_NE * SE_NE
+NE_lo = b1_NE - t_NE * SE_NE
+
+NC_up = b1_NC + t_NC * SE_NC
+NC_lo = b1_NC - t_NC * SE_NC
+
+S_up = b1_S + t_S * SE_S
+S_lo = b1_S - t_S * SE_S
+
+W_up = b1_W + t_W * SE_W
+W_lo = b1_W - t_W * SE_W
+
+# print CIs
+sprintf("NE(1): [%.3f, %.3f]", NE_lo, NE_up)
+sprintf("NC(2): [%.3f, %.3f]", NC_lo, NC_up)
+sprintf("S (3): [%.3f, %.3f]", S_lo, S_up)
+sprintf("W (4): [%.3f, %.3f]", W_lo, W_up)
+```
+
+```{r}
+library(knitr)
+kable(anova(fit_NE))
 ```
 
 ## Residuals
