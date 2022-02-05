@@ -37,7 +37,7 @@ We will be using R studio, a known professional software used in statistics, in 
 - Discussion
 
 
-## Part 1 1.43
+## Part 1 Fitting Regression Models
 
 ```{r} 
 # import data
@@ -103,11 +103,88 @@ plot(x=inc,y=phys,
 abline(fit_inc,col="red")
 ```
 
-### Residuals
+### c) MSE values
+
 ```{r}
 E_pop = phys - (b0_pop + (b1_pop * pop))
 E_bed = phys - (b0_bed + (b1_bed * bed))
 E_inc = phys - (b0_inc + (b1_inc * inc))
+
+n_pop = length(pop)
+n_bed = length(bed)
+n_inc = length(inc)
+SSE_p = sum((E_pop)^2)
+SSE_b = sum((E_bed)^2)
+SSE_i = sum((E_inc)^2)
+MSE_p = SSE_p/(n_pop - 2)
+MSE_b = SSE_b/(n_bed - 2)
+MSE_i = SSE_i/(n_inc - 2)
+```
+
+```{r}
+sprintf("Population: %f", MSE_p)
+sprintf("Beds: %f", MSE_b)
+sprintf("Income: %f", MSE_i)
+```
+The mean of squared errors of the number of 
+hospital beds as the predictor for number of active physicians in a county 
+is 310,191.883. This is the lower MSE value compared to predictors total personal
+income, which had an MSE of 324,539.394, and total population of the county, 
+which had the highest MSE of 372,203.505. This shows the mean squared errors in
+which the number of hospital beds in a county predicting the number of 
+active physicians is lowest and therefore has the lowest variability 
+around the fitted regression line.
+
+
+## Part 2. Measuring Linear Associations
+
+$R^2$ values
+
+```{r}
+fit_pop_sum = summary(fit_pop)
+fit_bed_sum = summary(fit_bed)
+fit_inc_sum = summary(fit_inc)
+r2p = fit_pop_sum$r.squared
+r2b = fit_bed_sum$r.squared
+r2i = fit_inc_sum$r.squared
+sprintf("Population: %f", r2p)
+sprintf("Beds: %f", r2b)
+sprintf("Income: %f", r2i)
+```
+
+For predicting the number of active physicians in a county, 
+the $R^2$ value for total population as the predictor is 0.8841, for 
+number of hospital beds is 0.9034, and for total personal income is 
+0.8989. Based on these values, the number of hospital beds as the predictor 
+has the largest coefficient of determination meaning that 90.34% of the 
+variation in the number of active physicians is due to introducing 
+number of hospital beds into the regression model. This shows that the 
+number of hospital beds accounts for the largest reduction in variability 
+in the number of active physicians.
+
+## Part 3 Inference about regression parameters
+
+```{r}
+alpha = 0.1
+t = qt((1 - alpha/2), n_pop - 2, lower.tail = TRUE)
+
+# split region
+# V12: % Bachelors and V15: per capita income
+region = CDI$V17 == "1"
+NE = CDI[region, c("V12", "V15")]
+
+region = CDI$V17 == "2"
+NC = CDI[region, c("V12", "V15")]
+
+region = CDI$V17 == "3"
+S = CDI[region, c("V12", "V15")]
+
+region = CDI$V17 == "4"
+W = CDI[region, c("V12", "V15")]
+```
+
+## Residuals
+```{r}
 # Residuals Plot
 plot(x=phys,y=E_pop,
      xlab="Total Population", ylab="Residuals")
@@ -131,52 +208,6 @@ demonstrate a linear relationship. Adding the regression function to the data
 further shows that the data of all 3 predictor variables follows the behavior
 of this regression function and further supports a linear regression 
 relationship for all 3 predictor variables for the number of active physicians.
-
-c. MSE
-```{r}
-npop=length(pop)
-nbed=length(bed)
-ninc=length(inc)
-SSEp=sum((E_pop)^2)
-SSEb=sum((E_bed)^2)
-SSEi=sum((E_inc)^2)
-MSEp=SSEp/(npop-2)
-MSEb=SSEb/(nbed-2)
-MSEi=SSEi/(ninc-2)
-```
-The mean of squared errors of the number of 
-hospital beds as the predictor for number of active physicians in a county, 
-is 310,191.88. This is the lower MSE value compared to predictors total personal
-income, which had an MSE of 324,539.39, and total population of the county, 
-which had the highest MSE of 372,203.50. This shows the mean squared errors in
-which the number of hospital beds in a county predicting the number of 
-active physicians is lowest and therefore has the lowest variability 
-around the fitted regression line.
-
-
-Part 2. Measuring Linear Associations
-
-R^2
-```{r}
-popFit2=summary(fit_pop)
-bedFit2=summary(fit_bed)
-incFit2=summary(fit_inc)
-r2p=popFit2$r.squared
-r2b=bedFit2$r.squared
-r2i=incFit2$r.squared
-```
-
-For predicting the number of active physicians in a county, 
-the r^2 value for total population as the predictor is 0.8841, for 
-number of hospital beds is 0.9034, and for total personal income is 
-0.8989. Based on these values, the number of hospital beds as the predictor 
-has the largest coefficient of determination meaning that 90.34% of the 
-variation in the number of active physicians is due to introducing 
-number of hospital beds into the regression model. This shows that the 
-number of hospital beds accounts for the largest reduction in variability 
-in the number of active physicians.
-
-hi
 
 ## Appendix
 
