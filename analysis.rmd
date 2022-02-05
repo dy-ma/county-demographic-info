@@ -1,35 +1,176 @@
-# Data Analysis of County Demographic Info
+---
+title: "STA 108 Project 1"
+author: "Mahir Oza, Dylan M. Ang, In Seon Kim"
+date: "1/31/2022"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
 
-authors: In Seon Kim, Dylan M Ang, Mahir Oza
-
-date: Feb 7th, 2022
-
-## Background
-
-The United States Census Bureau is a government organization that collects and produces data about the American people and economy. Its mission is to display quality data about the population in all regions of America. Every 10 years, they conduct a population and housing census that includes all residents living in the United States. They not only count the population, but also gather information about different factors in order to analyze the people and economy.
-
-Throughout our project, we analyze the County Demographic Information (CDI) provided by the United States Census Bureau. The data set displays information about 440 populous counties in the United States with 14 different variables to describe the county's economy. The counties range from all throughout the US, from Orange County in California to Wayne County in North Carolina. Various data variables such as land area, total population, number of active physicians, number of hospital beds, total serious crime, percent high school graduates, percent bachelor's degree, etc were gathered for a single county. Some counties with missing data were deleted from the data set. The data reflects the years 1990 and 1992. 
-
-We will be using R studio, a known professional software used in statistics, in our research to analyze and graph our data. The purpose of this is to demonstrate and analyze a simple linear regression model for our random variables and display inference methods that can be applied to our model. Data is provided from the textbook "Applied Linear Statistical Models" and our project will contain five parts:
-
-- Fitting regression models
-- Measuring linear association
-- Inference about regression parameters
-- Regression diagnostics
-- Discussion
-
-
-## Part 1: Fitting Regression Models
-
-### a
-
-### b
-
-### c
+```{r, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(
+	error = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	echo = FALSE, # hide all R codes!!
+	fig.width=5, fig.height=4,#set figure size
+	fig.align='center',#center plot
+	options(knitr.kable.NA = ''), #do not print NA in knitr table
+	tidy = FALSE #add line breaks in R codes
+)
+```
 
 
+## Part 1 1.43
+
+```{r} 
+# import data
+CDI = read.table("./CDI.txt")
+
+# define active physicians columns
+phys = CDI$V8
+
+# define predictor variables total pop, 
+#         hospital beds, and personal income 
+pop = CDI$V5
+bed = CDI$V9
+inc = CDI$V16
+```
+
+### a) Three predictors for Active Physicians
+
+All regression functions appear in the form,
+
+\begin{equation}\label{eq: gen_regress}
+  Y_i = \hat\beta_0 + \hat\beta_1 X_i + \epsilon_i
+\end{equation}
+
+```{r}
+# Physicians vs Population
+fit_pop = lm(phys ~ pop)
+b0_pop = fit_pop$coefficients[1]
+b1_pop = fit_pop$coefficients[2]
+
+# Physicians vs Beds
+fit_bed = lm(phys ~ bed)
+b0_bed = fit_bed$coefficients[1]
+b1_bed = fit_bed$coefficients[2]
+
+# Physicians vs Income
+fit_inc = lm(phys ~ inc)
+b0_inc = fit_inc$coefficients[1]
+b1_inc = fit_inc$coefficients[2]
+```
+
+\begin{align}
+  \text{Active Physicians } & \text{vs. Hospital Beds}         && Y = `r b0_bed` + `r b1_bed`X_i \\
+  \text{Active Physicians } & \text{vs. Total Population}      && Y = `r b0_pop` + `r b1_pop`X_i \\
+  \text{Active Physicians } & \text{vs. Total Personal Income} && Y = `r b0_inc` + `r b1_inc`X_i
+\end{align}
+
+### b) Plots
+
+```{r}
+plot(x=pop,y=phys,
+     xlab="Total Population", ylab="Number of Active Physicians", 
+     main="Active Physicians vs. Total Population")
+abline(fit_pop,col="red")
+
+plot(x=bed,y=phys,
+     xlab="Number of Hospital Beds", ylab="Number of Active Physicians", 
+     main="Active Physicians vs. Number of Hospital Beds")
+abline(fit_bed,col="red")
+
+plot(x=inc,y=phys,
+     xlab="Total Personal Income (in millions of dollars)", ylab="Number of Active Physicians", 
+     main="Active Physicians vs. Total Personal Income")
+abline(fit_inc,col="red")
+```
+
+### Residuals
+```{r}
+E_pop = phys - (b0_pop + (b1_pop * pop))
+E_bed = phys - (b0_bed + (b1_bed * bed))
+E_inc = phys - (b0_inc + (b1_inc * inc))
+# Residuals Plot
+plot(x=phys,y=E_pop,xlab="Total Population", ylab="Residuals")
+plot(x=phys,y=E_bed,xlab="Hospital Beds", ylab="Residuals")
+plot(x=phys,y=E_inc,xlab="Total Personal Income (in millions of dollars", ylab="Residuals")
+sprintf("Population SSE: %e", sum(E_pop))
+sprintf("Hospital Beds SSE : %e", sum(E_bed))
+sprintf("Income SSE : %e", sum(E_inc))
+```
+
+The residual plot for all 3 predictor variables as a 
+function of the number of active physicians shows no distinguishable 
+mathematical trend nor any pattern. Also the sum of all the residuals for the 3 
+predictor variables are extremely small values, close to 0. These show
+that a linear regression model is appropriate in showing the relationship 
+of the data. In addition to these arguments for a linear regression relationship
+being a good fit for the data, we can see that the data itself appears to 
+demonstrate a linear relationship. Adding the regression function to the data
+further shows that the data of all 3 predictor variables follows the behavior
+of this regression function and further supports a linear regression 
+relationship for all 3 predictor variables for the number of active physicians.
+
+c. MSE
+```{r}
+npop=length(pop)
+nbed=length(bed)
+ninc=length(inc)
+SSEp=sum((E_pop)^2)
+SSEb=sum((E_bed)^2)
+SSEi=sum((E_inc)^2)
+MSEp=SSEp/(npop-2)
+MSEb=SSEb/(nbed-2)
+MSEi=SSEi/(ninc-2)
+```
+The mean of squared errors of the number of 
+hospital beds as the predictor for number of active physicians in a county, 
+is 310,191.88. This is the lower MSE value compared to predictors total personal
+income, which had an MSE of 324,539.39, and total population of the county, 
+which had the highest MSE of 372,203.50. This shows the mean squared errors in
+which the number of hospital beds in a county predicting the number of 
+active physicians is lowest and therefore has the lowest variability 
+around the fitted regression line.
 
 
+Part 2. Measuring Linear Associations
+
+R^2
+```{r}
+popFit2=summary(fit_pop)
+bedFit2=summary(fit_bed)
+incFit2=summary(fit_inc)
+r2p=popFit2$r.squared
+r2b=bedFit2$r.squared
+r2i=incFit2$r.squared
+```
+
+For predicting the number of active physicians in a county, 
+the r^2 value for total population as the predictor is 0.8841, for 
+number of hospital beds is 0.9034, and for total personal income is 
+0.8989. Based on these values, the number of hospital beds as the predictor 
+has the largest coefficient of determination meaning that 90.34% of the 
+variation in the number of active physicians is due to introducing 
+number of hospital beds into the regression model. This shows that the 
+number of hospital beds accounts for the largest reduction in variability 
+in the number of active physicians.
+
+
+
+
+
+
+
+
+
+
+## Appendix
+
+```{r, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
 
 
 
