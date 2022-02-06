@@ -164,6 +164,8 @@ in the number of active physicians.
 
 ## Part 3 Inference about regression parameters
 
+Confidence Intervals for per capita income (y) vs percent of individuals
+with atleast bachelor's degree (x) for each region
 ```{r}
 
 # split region
@@ -241,6 +243,18 @@ sprintf("NC(2): [%.3f, %.3f]", NC_lo, NC_up)
 sprintf("S (3): [%.3f, %.3f]", S_lo, S_up)
 sprintf("W (4): [%.3f, %.3f]", W_lo, W_up)
 ```
+The regression lines for all 4 regions seem to have pretty large, positive
+slopes based on their 90% confidence intervals where the lower
+limit of each interval seems to 
+be greater that 190. However the magnitudes of these large, positive slopes and
+even the size of the confidence intervals differ slightly based on
+region. The NC region
+has an interval of [193.486, 283.853], the S region has an interval of 
+[285.708, 375.516], the W region has an interval of [364.758,515,873], and 
+the NE region has an interval of [460.518,583.800]. These intervals represent
+that we are 90% confident the true slope of per capita income vs percent
+of individuals with atleast a bachelor's degree lies in the interval for each
+respective region.
 
 ```{r}
 # SSRs
@@ -248,7 +262,95 @@ SSR_NE = sum( ( (b0_NE + b1_NE * NE$V12) - mean(NE$V15) )^2 )
 SSR_NC = sum( ( (b0_NC + b1_NC * NC$V12) - mean(NC$V15) )^2 )
 SSR_S = sum( ( (b0_S + b1_S * S$V12) - mean(S$V15) )^2 )
 SSR_W = sum( ( (b0_W + b1_W * W$V12) - mean(W$V15) )^2 )
+
+# MSRs
+MSR_NE = SSR_NE
+MSR_NC = SSR_NC
+MSR_S = SSR_S
+MSR_W = SSR_W
+
+# F-statistics
+F_NE = MSR_NE/MSE_NE
+F_NC = MSR_NC/MSE_NC
+F_S = MSR_S/MSE_S
+F_W = MSR_W/MSE_W
 ```
+NE F-test: per capita income (y) vs percent of individuals
+with atleast bachelor's degree (x)
+
+$$H_0: \beta_1 = 0$$
+$$H_1: \beta_1 \neq 0$$
+```{r}
+p_NE = 1-pf(F_NE,1,nrow(NE)-2)
+```
+\begin{align}
+  F = `r F_NE` \\
+  \text{p-value} = `r p_NE` 
+\end{align}
+For significance level $\alpha = 0.01$ the F-statistic for the NE region, 
+197.753, shows an incredibly small p-value where
+p-value $= 0 < 0.01 = \alpha$, 
+meaning that $H_0$ is rejected. This conclusion as well as the fact that the 
+F-statistic is very large, shows that regression for per capita income vs
+percent of individuals with a bachelor's degree in the NE region is useful.
+
+NC F-test: per capita income (y) vs percent of individuals
+with atleast bachelor's degree (x)
+
+$$H_0: \beta_1 = 0$$
+$$H_1: \beta_1 \neq 0$$
+```{r}
+p_NC = 1-pf(F_NC,1,nrow(NC)-2)
+```
+\begin{align}
+  F = `r F_NC` \\
+  \text{p-value} = `r p_NC` 
+\end{align}
+For significance level $\alpha = 0.01$ the F-statistic for the NC region, 
+76.826, shows a small p-value such that
+p-value $=$ `r p_NC` $< 0.01 = \alpha$, 
+meaning that $H_0$ is rejected. This conclusion as well as the fact that the 
+F-statistic is fairly large, shows that regression for per capita income vs
+percent of individuals with a bachelor's degree in the NC region is useful.
+
+S F-test: per capita income (y) vs percent of individuals
+with atleast bachelor's degree (x)
+
+$$H_0: \beta_1 = 0$$
+$$H_1: \beta_1 \neq 0$$
+```{r}
+p_S = 1-pf(F_S,1,nrow(S)-2)
+```
+\begin{align}
+  F = `r F_S` \\
+  \text{p-value} = `r p_S` 
+\end{align}
+For significance level $\alpha = 0.01$ the F-statistic for the NE region, 
+148.491, shows a very small p-value where
+p-value $= 0 < 0.01 = \alpha$, 
+meaning that $H_0$ is rejected. This conclusion as well as the fact that the 
+F-statistic is very large, shows that regression for per capita income vs
+percent of individuals with a bachelor's degree in the S region is useful.
+
+W F-test: per capita income (y) vs percent of individuals
+with atleast bachelor's degree (x)
+
+$$H_0: \beta_1 = 0$$
+$$H_1: \beta_1 \neq 0$$
+```{r}
+p_W = 1-pf(F_W,1,nrow(W)-2)
+```
+\begin{align}
+  F = `r F_W` \\
+  \text{p-value} = `r p_W` 
+\end{align}
+For significance level $\alpha = 0.01$ the F-statistic for the NE region, 
+94.195, shows a small p-value such that
+p-value $=$ `r p_W` $< 0.01 = \alpha$, 
+meaning that $H_0$ is rejected. This conclusion as well as the fact that the 
+F-statistic is fairly large, shows that regression for per capita income vs
+percent of individuals with a bachelor's degree in the W region is useful.
+
 
 ## Part 4 Regression diagnostics
 ### Plot 1
@@ -295,15 +397,21 @@ qqline(fit_inc$residuals, col='red')
 
 The residual plot for all 3 predictor variables as a 
 function of the number of active physicians shows no distinguishable 
-mathematical trend nor any pattern. Also the sum of all the residuals for the 3 
+mathematical trend nor any pattern. Also the sum of all the residuals for the 3
 predictor variables are extremely small values, close to 0. These show
 that a linear regression model is appropriate in showing the relationship 
-of the data. In addition to these arguments for a linear regression relationship
+of the data. In addition to these arguments for a linear regression 
+relationship
 being a good fit for the data, we can see that the data itself appears to 
 demonstrate a linear relationship. Adding the regression function to the data
 further shows that the data of all 3 predictor variables follows the behavior
 of this regression function and further supports a linear regression 
 relationship for all 3 predictor variables for the number of active physicians.
+While all 3 QQ plots demonstrate a similar form, it seems that the QQ
+plot for the number of active physicians vs number of hospital beds, shows
+the best linear trend in the plot compared to the other 2 predictor variables. 
+This helps shows that this predictor variable is slighlty more appropriate
+in determining a regression relationship for number of active physicians.
 
 ## Appendix
 
