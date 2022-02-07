@@ -37,7 +37,7 @@ We will be using R studio, a known professional software used in statistics, in 
 - Discussion
 
 
-## Part 1 Fitting Regression Models
+## Part 1. Fitting Regression Models
 
 ```{r} 
 # import data
@@ -53,7 +53,7 @@ bed = CDI$V9
 inc = CDI$V16
 ```
 
-### a) Three predictors for Active Physicians
+### a) Three Predictors for Active Physicians
 
 All regression functions appear in the form,
 
@@ -103,7 +103,7 @@ plot(x=inc,y=phys,
 abline(fit_inc,col="red")
 ```
 
-### c) MSE values
+### c) MSE Values
 
 ```{r}
 E_pop = phys - (b0_pop + (b1_pop * pop))
@@ -162,7 +162,7 @@ number of hospital beds into the regression model. This shows that the
 number of hospital beds accounts for the largest reduction in variability 
 in the number of active physicians.
 
-## Part 3 Inference about regression parameters
+## Part 3. Inference About Regression Parameters
 
 Confidence Intervals for per capita income (y) vs percent of individuals
 with atleast bachelor's degree (x) for each region
@@ -325,7 +325,7 @@ p_S = 1-pf(F_S,1,nrow(S)-2)
   F = `r F_S` \\
   \text{p-value} = `r p_S` 
 \end{align}
-For significance level $\alpha = 0.01$ the F-statistic for the NE region, 
+For significance level $\alpha = 0.01$ the F-statistic for the S region, 
 148.491, shows a very small p-value where
 p-value $= 0 < 0.01 = \alpha$, 
 meaning that $H_0$ is rejected. This conclusion as well as the fact that the 
@@ -344,7 +344,7 @@ p_W = 1-pf(F_W,1,nrow(W)-2)
   F = `r F_W` \\
   \text{p-value} = `r p_W` 
 \end{align}
-For significance level $\alpha = 0.01$ the F-statistic for the NE region, 
+For significance level $\alpha = 0.01$ the F-statistic for the W region, 
 94.195, shows a small p-value such that
 p-value $=$ `r p_W` $< 0.01 = \alpha$, 
 meaning that $H_0$ is rejected. This conclusion as well as the fact that the 
@@ -352,8 +352,8 @@ F-statistic is fairly large, shows that regression for per capita income vs
 percent of individuals with a bachelor's degree in the W region is useful.
 
 
-## Part 4 Regression diagnostics
-### Plot 1
+## Part 4. Regression Diagnostics
+### Plot 1: Number of Active Physicians (Y) vs Total Population (Xp)
 ```{r}
 #Residual Plot 
 plot(CDI$V5, fit_pop$residuals, 
@@ -366,7 +366,7 @@ qqplot = qqnorm(fit_pop$residuals)
 qqline(fit_pop$residuals, col='red')
 ```
 
-### Plot 2
+### Plot 2: Number of Active Physicians (Y) vs Number of Hospital Beds (Xh)
 ```{r}
 #Residual Plot
 plot(CDI$V9, fit_bed$residuals, 
@@ -379,7 +379,7 @@ qqplot = qqnorm(fit_bed$residuals)
 qqline(fit_bed$residuals, col='red')
 ```
 
-### Plot 3
+### Plot 3: Number of Active Physicians (Y) vs Total Personal Income (Xi)
 ```{r}
 plot(CDI$V16, fit_inc$residuals,
      xlab="Total Personal Income (in millions of dollars)", ylab = "Residuals",
@@ -412,6 +412,10 @@ plot for the number of active physicians vs number of hospital beds, shows
 the best linear trend in the plot compared to the other 2 predictor variables. 
 This helps shows that this predictor variable is slighlty more appropriate
 in determining a regression relationship for number of active physicians.
+
+
+## Part 5. Discussion
+
 
 ## Appendix
 
