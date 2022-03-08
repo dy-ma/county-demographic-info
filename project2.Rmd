@@ -2,7 +2,10 @@
 title: "proj2"
 author: "Dylan M Ang"
 date: "3/5/2022"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -27,6 +30,15 @@ sen = cdi_data$V7
 ```
 
 ## a
+
+```{r}
+# par(mfrow = c(1,2))
+# stem(pop, width = 20)
+# stem(are, width = 20)
+# stem(inc, width = 20)
+# stem(den, width = 20)
+# stem(sen, width = 20)
+```
 
 ### Total Population $(X_{1,1})$
 ```{r}
@@ -56,6 +68,8 @@ stem(sen)
 Stem and Leaf plots tell us about the distribution of the data. 
 In this case we can see that all of the predictor variable data is right-skewed.
 We see that Total Population, Land Area, Total Personal Income, and Population Density all have outliers. 
+
+\newpage
 
 ## b 
 
@@ -90,6 +104,7 @@ Finally, Population Over 64 (X2) has the weakest linear relationship with Active
 X2 also has the only negative correlation coefficient.
 Based on the scatter plot, Population Density and Total Personal Income are positively correlated with Active Physicians (Y). Therefore, as those predictors increase, the number of active physicians will also increase.
 
+\newpage
 ## c
 
 ```{r}
@@ -100,8 +115,8 @@ fit2 = lm(model2)
 f1s = summary(fit1)
 f2s = summary(fit2)
 
-betas1 = f1s$coefficients
-betas2 = f2s$coefficients
+betas1 = fit1$coefficients
+betas2 = fit2$coefficients
 ```
 
 ### Model 1
@@ -115,6 +130,11 @@ $$
 $$
   Y = `r round(betas2[1], digits = 3)` + `r round(betas2[2], digits = 3)` X_1 + `r round(betas2[3], digits = 3)`X_2 + `r round(betas2[4], digits = 3)` X_3
 $$
+
+```{r}
+slope = betas1[2] + betas1[3] + betas1[4]
+int = betas1[1]
+```
 
 ## d
 
@@ -130,16 +150,12 @@ model2.R2 = f2s$r.squared
 
 Based on the $R^2$ value, Model 2 is a slightly better model, but they are close.
 
-## e 
-
-### Model 1
+## e: Model 1
 ```{r}
-# Get resids
+# Get residuals
 m1.resid = f1s$residuals
-m2.resid = f2s$residuals
 
 m1.yhat = fit1$fitted.values
-m2.yhat = fit2$fitted.values
 
 par(mfrow = c(2,2))
 
@@ -181,14 +197,83 @@ abline(0,0,col = "red")
 ### Model 2
 
 ```{r}
+# Get residuals
+m2.resid = f2s$residuals
 
+m2.yhat = fit2$fitted.values
+
+par(mfrow = c(2,2))
+
+# Residual Plots
 plot(m2.resid ~ m2.yhat,
-     main = "Model 2: Residuals", xlab = "Fitted Values", ylab = "Residuals")
+     main = "Model 2: Residuals ~ Fitted values", xlab = "Fitted Values", ylab = "Residuals")
 abline(0,0,col = "red")
+
+# Predictors
+plot(x = (pop)/1000000,y = m2.resid,
+     main = "Model 2: Residuals ~ Population", xlab = "Population (1 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(m2.resid ~ are,
+     main = "Model 2: Residuals ~ Area", xlab = "Land Area", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(m2.resid ~ inc,
+     main = "Model 2: Residuals ~ Income", xlab = "Personal Income", ylab = "Residuals")
+abline(0,0,col = "red")
+
+par(mfrow = c(2,2))
+
+# Two Factor
+plot(x = (pop/100000) * (are/10000), y = m2.resid,
+     main = "Model 2: Residuals ~ Population * Area", xlab = "Population * Area (10 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(x = (pop/100000) * (inc/10000), y = m2.resid,
+     main = "Model 2: Residuals ~ Population * Income", xlab = "Population * Income (10 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(x = (are * inc)/10000000, y = m2.resid,
+     main = "Model 1: Residuals ~ Area * Income", xlab = "Area * Income (10 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
 ```
 
 
 ## f
+
+### $R^2$ values of two factor interaction terms in Model 1
+
+```{r}
+tf1_12 <- lm(phy ~ pop*are)
+tf1_13 <- lm(phy ~ pop*inc)
+tf1_23 <- lm(phy ~ are*inc)
+
+r2_12 <- summary(tf1_12)$r.squared
+r2_13 <- summary(tf1_13)$r.squared
+r2_23 <- summary(tf1_23)$r.squared
+
+res <- c(a = r2_12, b = r2_13, c = r2_23)
+names(res) <- c("(R2 of X1*X2)", "(R2 of X1*X3)", "(R2 of X2*X3)")
+res
+```
+
+
+### $R^2$ values of two factor interaction terms in Model 2
+
+```{r}
+tf2_12 <- lm(phy ~ den*sen)
+tf2_13 <- lm(phy ~ den*inc)
+tf2_23 <- lm(phy ~ sen*inc)
+
+r2_12 <- summary(tf2_12)$r.squared
+r2_13 <- summary(tf2_13)$r.squared
+r2_23 <- summary(tf2_23)$r.squared
+
+res <- c(a = r2_12, b = r2_13, c = r2_23)
+names(res) <- c("(R2 of X1*X2)", "(R2 of X1*X3)", "(R2 of X2*X3)")
+res
+```
 
 \newpage
 # Part 2
