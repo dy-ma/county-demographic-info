@@ -1,0 +1,201 @@
+---
+title: "proj2"
+author: "Dylan M Ang"
+date: "3/5/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Background
+
+
+\newpage
+
+# Part 1
+
+```{r}
+cdi_data = read.table("./CDI.txt")
+phy = cdi_data$V8 # Number of Active Physicians
+pop = cdi_data$V5 # Total Population
+are = cdi_data$V4 # Land Area
+inc = cdi_data$V16 # total personal income
+den = pop / are # Population density
+sen = cdi_data$V7
+```
+
+## a
+
+### Total Population $(X_{1,1})$
+```{r}
+stem(pop)
+```
+
+### Land Area $(X_{1,2})$
+```{r}
+stem(are)
+```
+
+### Total Personal Income $(X_{1,3})$ and $(X_{2,3})$
+```{r}
+stem(inc)
+```
+
+### Population Density $(X_{2, 1})$
+```{r}
+stem(den)
+```
+
+### Total Population over 64 $(X_{2,2})$
+```{r}
+stem(sen)
+```
+
+Stem and Leaf plots tell us about the distribution of the data. 
+In this case we can see that all of the predictor variable data is right-skewed.
+We see that Total Population, Land Area, Total Personal Income, and Population Density all have outliers. 
+
+## b 
+
+```{r}
+# Create Dataframes
+model1 = data.frame(Y = phy, X1 = pop, X2 = are, X3 = inc)
+colnames(model1) = c("Active Physicians (Y)", "Total Population (X1)", "Land Area (X2)", "Total Personal Income (X3)")
+
+model2 = data.frame(Y = phy, X1 = den, X2 = sen, X3 = inc)
+colnames(model2) = c("Active Physicians (Y)", "Population Density (X1)", "Population Over 64 (X2)", "Total Personal Income (X3)")
+```
+
+```{r}
+pairs(model1, main = "Scatter Plot Matrix (Model 1)")
+cor(model1)
+```
+
+Total Population (X1) and Total Personal Income (X3) are highly correlated to The Number of Active Physicians (Y) with correlation coefficients of $0.940$ and $0.948$, respectively. 
+This means there is a strong linear relationship between the predictor variables and number of active physicians.
+Land Area (X2) has a weak correlation with Active Physicians (Y) with a coefficient of $0.078$. 
+This means there is a weak linear relationship between land area and the number of active physicians.
+Based on the scatter plot, Total Population and Total Personal Income are positively correlated with Active Physicians, meaning that when they increase, the number of Active Physicians increases as well.
+
+```{r}
+pairs(model2, main = "Scatter Plot Matrix (Model 2)")
+cor(model2)
+```
+
+Of the three predictor variables, Total Personal Income (X3) has the strongest linear relationship with the number of Active Physicians (Y) with a correlation coefficient of $0.948$. 
+Then, Population Density (X1) has a weaker linear relationship with Active Physicians (Y) with a correlation coefficient of $0.406$.
+Finally, Population Over 64 (X2) has the weakest linear relationship with Active Physicians (Y) with a correlation coefficient of $-0.00312$. 
+X2 also has the only negative correlation coefficient.
+Based on the scatter plot, Population Density and Total Personal Income are positively correlated with Active Physicians (Y). Therefore, as those predictors increase, the number of active physicians will also increase.
+
+## c
+
+```{r}
+# Get models
+fit1 = lm(model1)
+fit2 = lm(model2)
+
+f1s = summary(fit1)
+f2s = summary(fit2)
+
+betas1 = f1s$coefficients
+betas2 = f2s$coefficients
+```
+
+### Model 1
+
+$$
+  Y = `r round(betas1[1], digits = 3)` + `r round(betas1[2], digits = 3)` X_1 + `r round(betas1[3], digits = 3)`X_2 + `r round(betas1[4], digits = 3)` X_3
+$$
+
+### Model 2
+
+$$
+  Y = `r round(betas2[1], digits = 3)` + `r round(betas2[2], digits = 3)` X_1 + `r round(betas2[3], digits = 3)`X_2 + `r round(betas2[4], digits = 3)` X_3
+$$
+
+## d
+
+```{r}
+model1.R2 = f1s$r.squared
+model2.R2 = f2s$r.squared
+```
+
+\begin{align*}
+  \text{Model 1} \; R^2: & \quad `r model1.R2` \\
+  \text{Model 2} \; R^2: & \quad `r model2.R2` \\
+\end{align*}
+
+Based on the $R^2$ value, Model 2 is a slightly better model, but they are close.
+
+## e 
+
+### Model 1
+```{r}
+# Get resids
+m1.resid = f1s$residuals
+m2.resid = f2s$residuals
+
+m1.yhat = fit1$fitted.values
+m2.yhat = fit2$fitted.values
+
+par(mfrow = c(2,2))
+
+# Residual Plots
+plot(m1.resid ~ m1.yhat,
+     main = "Model 1: Residuals ~ Fitted values", xlab = "Fitted Values", ylab = "Residuals")
+abline(0,0,col = "red")
+
+# Predictors
+plot(x = (pop)/1000000,y = m1.resid,
+     main = "Model 1: Residuals ~ Population", xlab = "Population (1 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(m1.resid ~ are,
+     main = "Model 1: Residuals ~ Area", xlab = "Land Area", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(m1.resid ~ inc,
+     main = "Model 1: Residuals ~ Income", xlab = "Personal Income", ylab = "Residuals")
+abline(0,0,col = "red")
+
+par(mfrow = c(2,2))
+
+# Two Factor
+plot(x = (pop/100000) * (are/10000), y = m1.resid,
+     main = "Model 1: Residuals ~ Population * Area", xlab = "Population * Area (10 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(x = (pop/100000) * (inc/10000), y = m1.resid,
+     main = "Model 1: Residuals ~ Population * Income", xlab = "Population * Income (10 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+plot(x = (are * inc)/10000000, y = m1.resid,
+     main = "Model 1: Residuals ~ Area * Income", xlab = "Area * Income (10 Million)", ylab = "Residuals")
+abline(0,0,col = "red")
+
+```
+
+### Model 2
+
+```{r}
+
+plot(m2.resid ~ m2.yhat,
+     main = "Model 2: Residuals", xlab = "Fitted Values", ylab = "Residuals")
+abline(0,0,col = "red")
+```
+
+
+## f
+
+\newpage
+# Part 2
+
+# Part 3
+
+# Appendix
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```

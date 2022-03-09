@@ -1,7 +1,7 @@
 ---
 title: "STA 108 Project 1"
 author: "Mahir Oza, Dylan M. Ang, In Seon Kim"
-date: "1/31/2022"
+date: "2/6/2022"
 output:
   pdf_document: default
   html_document:
@@ -30,12 +30,13 @@ Throughout our project, we analyze the County Demographic Information (CDI) prov
 
 We will be using R studio, a known professional software used in statistics, in our research to analyze and graph our data. The purpose of this is to demonstrate and analyze a simple linear regression model for our random variables and display inference methods that can be applied to our model. Data is provided from the textbook "Applied Linear Statistical Models" and our project will contain five parts:
 
-- Fitting regression models
-- Measuring linear association
-- Inference about regression parameters
-- Regression diagnostics
-- Discussion
+1. Fitting regression models
+1. Measuring linear association
+1. Inference about regression parameters
+1. Regression diagnostics
+1. Discussion
 
+\pagebreak
 
 ## Part 1. Fitting Regression Models
 
@@ -103,6 +104,14 @@ plot(x=inc,y=phys,
 abline(fit_inc,col="red")
 ```
 
+We can see that the data itself appears to 
+demonstrate a linear relationship, showing some evidence that
+the linear regression relation appears to show a good fit for the data. 
+Adding the regression function to the data
+further shows that the data of all 3 predictor variables follows the behavior
+of this regression function and further supports a linear regression 
+relationship for all 3 predictor variables for the number of active physicians.
+
 ### c) MSE Values
 
 ```{r}
@@ -135,6 +144,7 @@ which the number of hospital beds in a county predicting the number of
 active physicians is lowest and therefore has the lowest variability 
 around the fitted regression line.
 
+\pagebreak
 
 ## Part 2. Measuring Linear Associations
 
@@ -161,6 +171,8 @@ variation in the number of active physicians is due to introducing
 number of hospital beds into the regression model. This shows that the 
 number of hospital beds accounts for the largest reduction in variability 
 in the number of active physicians.
+
+\pagebreak
 
 ## Part 3. Inference About Regression Parameters
 
@@ -253,7 +265,7 @@ has an interval of [193.486, 283.853], the S region has an interval of
 [285.708, 375.516], the W region has an interval of [364.758,515,873], and 
 the NE region has an interval of [460.518,583.800]. These intervals represent
 that we are 90% confident the true slope of per capita income vs percent
-of individuals with atleast a bachelor's degree lies in the interval for each
+of individuals with at least a bachelor's degree lies in the interval for each
 respective region.
 
 ```{r}
@@ -275,8 +287,24 @@ F_NC = MSR_NC/MSE_NC
 F_S = MSR_S/MSE_S
 F_W = MSR_W/MSE_W
 ```
-NE F-test: per capita income (y) vs percent of individuals
-with atleast bachelor's degree (x)
+
+```{r}
+anova_table <- function(region, ssr, sse, msr, mse, f, p) {
+  antable = data.frame(Source = c("Regression", "Error", "Total"),
+                     df = c(1, nrow(region) - 2, nrow(region) - 1),
+                     ss = c(ssr, sse, ssr + sse),
+                     ms = c(msr, mse, NA),
+                     f_val = c(f, NA, NA),
+                     p_val = c(p, NA, NA))
+  return(antable)
+}
+
+```
+
+### NE F-test
+
+per capita income (y) vs percent of individuals
+with at least bachelor's degree (x)
 
 $$H_0: \beta_1 = 0$$
 $$H_1: \beta_1 \neq 0$$
@@ -294,8 +322,15 @@ meaning that $H_0$ is rejected. This conclusion as well as the fact that the
 F-statistic is very large, shows that regression for per capita income vs
 percent of individuals with a bachelor's degree in the NE region is useful.
 
-NC F-test: per capita income (y) vs percent of individuals
-with atleast bachelor's degree (x)
+```{r}
+library(knitr)
+kable(anova_table(NE, SSR_NE, SSE_NE, MSR_NE, MSE_NE, F_NE, p_NE))
+```
+
+#### NC F-test
+
+per capita income (y) vs percent of individuals
+with at least bachelor's degree (x)
 
 $$H_0: \beta_1 = 0$$
 $$H_1: \beta_1 \neq 0$$
@@ -313,8 +348,14 @@ meaning that $H_0$ is rejected. This conclusion as well as the fact that the
 F-statistic is fairly large, shows that regression for per capita income vs
 percent of individuals with a bachelor's degree in the NC region is useful.
 
-S F-test: per capita income (y) vs percent of individuals
-with atleast bachelor's degree (x)
+```{r}
+kable(anova_table(NC, SSR_NC, SSE_NC, MSR_NC, MSE_NC, F_NC, p_NC))
+```
+
+### S F-test
+
+per capita income (y) vs percent of individuals
+with at least bachelor's degree (x)
 
 $$H_0: \beta_1 = 0$$
 $$H_1: \beta_1 \neq 0$$
@@ -332,8 +373,14 @@ meaning that $H_0$ is rejected. This conclusion as well as the fact that the
 F-statistic is very large, shows that regression for per capita income vs
 percent of individuals with a bachelor's degree in the S region is useful.
 
-W F-test: per capita income (y) vs percent of individuals
-with atleast bachelor's degree (x)
+```{r}
+kable(anova_table(S, SSR_S, SSE_S, MSR_S, MSE_S, F_S, p_S))
+```
+
+### W F-test
+
+per capita income (y) vs percent of individuals
+with at least bachelor's degree (x)
 
 $$H_0: \beta_1 = 0$$
 $$H_1: \beta_1 \neq 0$$
@@ -351,6 +398,11 @@ meaning that $H_0$ is rejected. This conclusion as well as the fact that the
 F-statistic is fairly large, shows that regression for per capita income vs
 percent of individuals with a bachelor's degree in the W region is useful.
 
+```{r}
+kable(anova_table(W, SSR_W, SSE_W, MSR_W, MSE_W, F_W, p_W))
+```
+
+\pagebreak
 
 ## Part 4. Regression Diagnostics
 ### Plot 1: Number of Active Physicians (Y) vs Total Population (Xp)
@@ -391,18 +443,12 @@ qqplot = qqnorm(fit_inc$residuals)
 qqline(fit_inc$residuals, col='red')
 ```
 
-
-
-
-
 The residual plot for all 3 predictor variables as a 
 function of the number of active physicians shows no distinguishable 
 mathematical trend nor any pattern. Also the sum of all the residuals for the 3
 predictor variables are extremely small values, close to 0. These show
 that a linear regression model is appropriate in showing the relationship 
-of the data. In addition to these arguments for a linear regression 
-relationship
-being a good fit for the data, we can see that the data itself appears to 
+of the data. In addition, we can see that the data itself appears to 
 demonstrate a linear relationship. Adding the regression function to the data
 further shows that the data of all 3 predictor variables follows the behavior
 of this regression function and further supports a linear regression 
@@ -410,12 +456,38 @@ relationship for all 3 predictor variables for the number of active physicians.
 While all 3 QQ plots demonstrate a similar form, it seems that the QQ
 plot for the number of active physicians vs number of hospital beds, shows
 the best linear trend in the plot compared to the other 2 predictor variables. 
-This helps shows that this predictor variable is slighlty more appropriate
+This helps shows that this predictor variable is slightly more appropriate
 in determining a regression relationship for number of active physicians.
 
+\pagebreak
 
 ## Part 5. Discussion
 
+<!-- Discuss the possible impact of observational data on your results. -->
+<!-- Are there any thing else that you would like to comment on? Any suggestions on how -->
+<!-- to improve the linear regression models? -->
+
+<!-- - missing data -->
+<!-- - sample counties of US, assume that the counties are representative of US -->
+<!-- - more than the three we looked at -->
+
+We discussed three possible sources of error that may have been present in our 
+observation data. First, there are many counties who
+are missing from the data set because they may have lacked one or more of the 
+values. In addition, the data set is described as consisting of 440 of the most
+populous counties. Therefore, the data set may not be representative of the entire 
+United States, especially less populous counties.
+Finally, we only compared the total number of doctors to three predictor variables,
+but there could be other better variables that we didn't consider. 
+
+As for improving our models, we can make the model more representative of the 
+United States, by taking random
+samples of counties rather than only picking the most populous, reducing bias. 
+To make the bachelors degrees to per capita income model more accurate, we could
+split up the divisions by state rather than region. This would be more precise 
+and give us more opportunities to see patterns.
+
+\pagebreak
 
 ## Appendix
 
