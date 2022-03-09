@@ -1,6 +1,6 @@
 ---
-title: "proj2"
-author: "Dylan M Ang"
+title: "STA 108 Project 2"
+author: "Mahir Oza, Dylan M. Ang, In Seon Kim"
 date: "3/5/2022"
 output:
   pdf_document: default
@@ -13,6 +13,16 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Background
+The United States Census Bureau is a government organization that collects and produces data about the American people and economy. Its mission is to display quality data about the population in all regions of America. Every 10 years, they conduct a population and housing census that includes all residents living in the United States. They not only count the population, but also gather information about different factors in order to analyze the people and economy.
+
+Throughout our project, we analyze the County Demographic Information (CDI) provided by the United States Census Bureau. The data set displays information about 440 populous counties in the United States with 14 different variables to describe the county's economy. The counties range from all throughout the US, from Orange County in California to Wayne County in North Carolina. Various data variables such as land area, total population, number of active physicians, number of hospital beds, total serious crime, percent high school graduates, percent bachelor's degree, etc were gathered for a single county. Some counties with missing data were deleted from the data set. The data reflects the years 1990 and 1992. 
+
+Continuing from Project 1, we will be analyzing our CDI data with multiple linear regression and analyze how each variable contributes to the overall data. We will further be formulating tests to determine how well the predictor variable is explained by the linear regression model. Data is provided from the textbook "Applied Linear Statistical Models" and our project will contain three parts:
+
+1. Part I: Multiple linear regression I.
+1. Part II: Multiple linear regression II.
+1. Part III: Discussion
+1. Appendix
 
 
 \newpage
