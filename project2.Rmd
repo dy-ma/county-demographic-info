@@ -239,44 +239,196 @@ abline(0,0,col = "red")
 
 ```
 
+\newpage
 
 ## f
 
-### $R^2$ values of two factor interaction terms in Model 1
-
 ```{r}
-tf1_12 <- lm(phy ~ pop*are)
-tf1_13 <- lm(phy ~ pop*inc)
-tf1_23 <- lm(phy ~ are*inc)
+tf1_12 <- lm(phy ~ pop*are+inc)
+tf1_13 <- lm(phy ~ pop*inc+are)
+tf1_23 <- lm(phy ~ are*inc+pop)
 
 r2_12 <- summary(tf1_12)$r.squared
 r2_13 <- summary(tf1_13)$r.squared
 r2_23 <- summary(tf1_23)$r.squared
 
-res <- c(a = r2_12, b = r2_13, c = r2_23)
-names(res) <- c("(R2 of X1*X2)", "(R2 of X1*X3)", "(R2 of X2*X3)")
-res
-```
+res1 <- c(a = r2_12, b = r2_13, c = r2_23)
+names(res1) <- c("(R2 of X1*X2)", "(R2 of X1*X3)", "(R2 of X2*X3)")
 
-
-### $R^2$ values of two factor interaction terms in Model 2
-
-```{r}
-tf2_12 <- lm(phy ~ den*sen)
-tf2_13 <- lm(phy ~ den*inc)
-tf2_23 <- lm(phy ~ sen*inc)
+tf2_12 <- lm(phy ~ den*sen+inc)
+tf2_13 <- lm(phy ~ den*inc+sen)
+tf2_23 <- lm(phy ~ sen*inc+den)
 
 r2_12 <- summary(tf2_12)$r.squared
 r2_13 <- summary(tf2_13)$r.squared
 r2_23 <- summary(tf2_23)$r.squared
 
-res <- c(a = r2_12, b = r2_13, c = r2_23)
-names(res) <- c("(R2 of X1*X2)", "(R2 of X1*X3)", "(R2 of X2*X3)")
-res
+res2 <- c(a = r2_12, b = r2_13, c = r2_23)
+names(res2) <- c("(R2 of X1*X2)", "(R2 of X1*X3)", "(R2 of X2*X3)")
 ```
+
+### Model 1
+
+```{r}
+tf1_b12 <- tf1_12$coefficients
+tf1_b13 <- tf1_13$coefficients
+tf1_b23 <- tf1_23$coefficients
+```
+
+\begin{align}
+Y_{1,2} & = `r round(tf1_b12[1],3)` + `r round(tf1_b12[2],3)` x_1 + `r round(tf1_b12[3],3)` x_2 + `r round(tf1_b12[4],3)` x_{3} + `r format(round(tf1_b12[5],8), scientific = FALSE)` x_1 x_2 \\
+Y_{1,3} & = `r round(tf1_b13[1],3)` + `r round(tf1_b13[2],3)` x_1 + `r round(tf1_b13[3],3)` x_2 + `r round(tf1_b13[4],3)` x_{3} + `r format(round(tf1_b13[5],9), scientific = FALSE)` x_1 x_3 \\
+Y_{2,3} & = `r round(tf1_b23[1],3)` + `r round(tf1_b23[2],3)` x_1 + `r round(tf1_b23[3],3)` x_2 + `r round(tf1_b23[4],3)` x_{3} + `r format(round(tf1_b23[5],8), scientific = FALSE)` x_2 x_3
+\end{align}
+
+### Model 2
+
+```{r}
+tf2_b12 <- tf2_12$coefficients
+tf2_b13 <- tf2_13$coefficients
+tf2_b23 <- tf2_23$coefficients
+```
+
+\begin{align}
+Y_{1,2} & = `r round(tf2_b12[1],3)` + `r round(tf2_b12[2],3)` x_1 + `r round(tf2_b12[3],3)` x_2 + `r round(tf2_b12[4],3)` x_{3} + `r format(round(tf2_b12[5],8), scientific = FALSE)` x_1 x_2 \\
+Y_{1,3} & = `r round(tf2_b13[1],3)` + `r round(tf2_b13[2],3)` x_1 + `r round(tf2_b13[3],3)` x_2 + `r round(tf2_b13[4],3)` x_{3} + `r format(round(tf2_b13[5],8), scientific = FALSE)` x_1 x_3 \\
+Y_{2,3} & = `r round(tf2_b23[1],3)` + `r round(tf2_b23[2],3)` x_1 + `r round(tf2_b23[3],3)` x_2 + `r round(tf2_b23[4],3)` x_{3} + `r format(round(tf2_b23[5],8), scientific = FALSE)` x_2 x_3
+\end{align}
+
+### $R^2$ values of two factor interaction terms in Model 1
+
+```{r}
+res1
+```
+
+### $R^2$ values of two factor interaction terms in Model 2
+
+```{r}
+res2
+```
+
+For Model 1, the model with the $x_2 * x_3$ interaction term had the highest $R^2$ value of the other possible interaction models. Therefore, this is the preferable model, since a higher proportion of the variability in our response variable (number of active physicians) is explained by our predictors.
+
+For Model 2, the model with the $x_1 * x_2$ interaction term had the highest $R^2$ value of the other possible interaction models. Therefore, this is the preferable model, since a higher proportion of the variability in our response variable (number of active physicians) is explained by our predictors.
 
 \newpage
 # Part 2
+
+## a
+
+```{r}
+# already have other predictors
+bed <- cdi_data$V9
+fit  <- lm(phy ~ pop+inc)
+fit3 <- lm(phy ~ pop+inc+are)
+fit4 <- lm(phy ~ pop+inc+sen)
+fit5 <- lm(phy ~ pop+inc+bed)
+
+SSE <- function(fit) {
+  tail(anova(fit)$`Sum Sq`, n = 1)
+}
+
+r2_3 = 1 - SSE(fit3)/SSE(fit)
+r2_4 = 1 - SSE(fit4)/SSE(fit)
+r2_5 = 1 - SSE(fit5)/SSE(fit)
+
+# c(r2_3, r2_4, r2_5)
+```
+
+\begin{align*}
+  R^2_{Y,3|1,2} & = `r round(r2_3, 4)` \\
+  R^2_{Y,4|1,2} & = `r round(r2_4, 4)` \\
+  R^2_{Y,5|1,2} & = `r round(r2_5, 4)`
+\end{align*}
+
+## b
+
+The coefficient of partial determination measures measures the proportionate
+reduction in variation of the response variable (number of active physicians)
+due to adding a new predictor ($x_3, x_4, \text{or } x_5$), given that
+$x_1$ (total population) and $x_2$ (total personal income) are already 
+in the model.
+This means since the model including $x_5$ (number of hospital beds)
+had the higher proportion/coefficient of determination, `r round(r2_5, 4)`, 
+this predictor variable is the best and most important to the 
+model as it reduces the
+most variation in the number of active physicians being predicted. This higher
+proportion means that the sum of squares of the predictor being number of beds,
+is greater than the sum of squares for the other predictors, land area and 
+proportion of population over 65, since the coefficient of partial determination
+is a ratio between the sum of squares of the predictor being considered and the 
+predictors already in the model.
+
+## c
+
+```{r}
+F5=anova(fit5)$Sum[3]/(SSE(fit5)/anova(fit5)$Df[4])
+Fval=qf(1-0.01,1,436)
+```
+$$H_0: \beta_5 = 0$$
+$$H_1: \beta_5 \neq 0$$
+$$F^* = `r round(F5, 4)` > `r round(Fval, 4)` $$
+reject $H_0$
+
+Conclude that at the 1% significance level there is significant evidence that
+$x_5$ (number of hospital beds) is helpful in the regression model for predicting
+the response variable, number of active physicians, given that $x_1$ 
+(total population) and $x_2$ (total personal income) are already in the model.
+Furthermore, we would not expect the $F^*$ of the other 2 predictor variables, 
+land area and percent of population older than 65, to be as high as the one
+for number of hospital beds. This is because the $F^*$ value is calculated as
+the ratio between the sum of squares of the predictor in question given 
+$x_1$ and $x_2$ are already in the model and the mean squared error of the 
+whole model including the predictor in question. Since the sum of squares of 
+the number of hospital beds is higher, this would mean this ratio and 
+$F^*$ value is greater and therefore given the null the outcome demonstrated
+by the data is more extreme as compared to the other possible predictor 
+candidates.
+
+## d
+```{r}
+fit34=lm(phy~pop+inc+are+sen)
+fit35=lm(phy~pop+inc+are+bed)
+fit45=lm(phy~pop+inc+sen+bed)
+r2_34=1-SSE(fit34)/SSE(fit)
+r2_35=1-SSE(fit35)/SSE(fit)
+r2_45=1-SSE(fit45)/SSE(fit)
+```
+
+\begin{align*}
+  R^2_{Y,3,4|1,2} & = `r round(r2_34, 4)` \\
+  R^2_{Y,3,5|1,2} & = `r round(r2_35, 4)` \\
+  R^2_{Y,4,5|1,2} & = `r round(r2_45, 4)`
+\end{align*}
+
+Based on these coefficient of partial determinations it is clear that the
+best pairing of 
+predictors to use given that $x_1$ and $x_2$ are already in the model are 
+$x_4$ (percent of seniors over 65) and $x_5$ (total number of hospital beds). 
+By considering the pairing of these two predictors we can see that this pair
+reduces the greatest proportion of variation (`r round(r2_45, 4)`) in 
+the total number active physicians compared to the other 2 possible pairings.
+
+```{r}
+SSE1245=SSE(fit45)
+SSE12=SSE(fit)
+SSR45=SSE12-SSE1245
+F45=(SSR45/2)/(SSE12/435)
+Fval45=qf(1-0.01,2,435)
+```
+
+$$H_0: \beta_4 = \beta_5 = 0$$
+$$H_1: \beta_4 \neq 0 \text{ or } \beta_5 \neq 0 \text{ or both} \neq 0$$
+$$F^* = `r round(F45, 4)` > `r round(Fval45, 4)` $$
+reject $H_0$
+
+Have significant evidence, that at the 1% significance level, the pairing of 
+both or either of
+$x_4$ (proportion of population over 65) and $x_5$ (number of hospital beds)
+would be helpful and useful to our model given that $x_1$ (total population)
+and $x_2$ (total personal income) are already in the model.
+
+\newpage
 
 # Part 3
 
